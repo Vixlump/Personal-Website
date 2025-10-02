@@ -6,7 +6,6 @@ This is a personal website portfolio showcasing my professional background, skil
 ## Project Structure
 
 ````
-A2-Personal-Website/
 ├── index.html - Homepage with resume-like content
 ├── visualizations.html - Visualization portfolio page
 ├── style.css - Main stylesheet for the entire website
