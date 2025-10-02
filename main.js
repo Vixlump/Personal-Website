@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const images = document.querySelectorAll('img');
     images.forEach(img => {
         img.addEventListener('load', function() {
-            this.style.opacity = '0';
+            this.style.opacity = '1';
         });
         
         //set initial opacity for fade in effect
