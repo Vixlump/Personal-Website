@@ -80,15 +80,5 @@ document.addEventListener('DOMContentLoaded', function() {
         return emailRegex.test(email);
     }
     
-    //add loading animation to images
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        img.addEventListener('load', function() {
-            this.style.opacity = '1';
-        });
-        
-        //set initial opacity for fade in effect
-        img.style.opacity = '0';
-        img.style.transition = 'opacity 0.3s ease';
-    });
+    
 });
