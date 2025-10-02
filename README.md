@@ -5,6 +5,7 @@ This is a personal website portfolio showcasing my professional background, skil
 
 ## Project Structure
 
+````
 A2-Personal-Website/
 ├── index.html # Homepage with resume-like content
 ├── visualizations.html # Visualization portfolio page
@@ -12,6 +13,8 @@ A2-Personal-Website/
 ├── main.js # JavaScript for interactive elements and form validation
 ├── vis.js # JavaScript for generating SVG visualizations
 └── README.md # Project documentation
+````
+
 
 ## Features
 
