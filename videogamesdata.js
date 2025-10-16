@@ -70,7 +70,7 @@ Promise.all([
                 "groupby": ["Genre", "Platform"]
             },
             {
-                "filter": "datum.Avg_Global_Sales > 0.1" // Filter out very low averages
+                "filter": "datum.Avg_Global_Sales > 0.1" //filter out low averages
             }
         ],
         "mark": "circle",
@@ -110,64 +110,65 @@ Promise.all([
 
     //visualization 2: Sales Over Time by Platform and Genre
     const vis2Spec = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "description": "Sales trends over time by platform",
-        "data": {
-            "values": wideDataParsed
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "description": "Sales trends over time by platform",
+      "data": { "values": wideDataParsed },
+      "transform": [
+        { "filter": "datum.Year >= 1980 && datum.Year <= 2016" },
+
+        //create a real Date from the numeric Year
+        {
+          "calculate": "datetime(datum.Year, 0, 1)",
+          "as": "YearDate"
         },
-        "transform": [
-            {
-                "filter": "datum.Year >= 1980 && datum.Year <= 2016"
+
+        {
+          "aggregate": [
+            { "op": "sum", "field": "Global_Sales", "as": "Total_Global_Sales" }
+          ],
+          "groupby": ["Year", "Platform", "YearDate"]
+        },
+        {
+          "window": [
+            { "op": "sum", "field": "Total_Global_Sales", "as": "Cumulative_Sales" }
+          ],
+          "groupby": ["Platform"],
+          "sort": [{ "field": "Year", "order": "ascending" }],
+          "frame": [null, 0]
+        }
+      ],
+      "layer": [
+        {
+          "mark": "line",
+          "encoding": {
+            "x": {
+              "field": "YearDate",
+              "type": "temporal",
+              "title": "Year",
+              "axis": { "format": "%Y", "tickCount": 8 }
             },
-            {
-                "aggregate": [{
-                    "op": "sum",
-                    "field": "Global_Sales",
-                    "as": "Total_Global_Sales"
-                }],
-                "groupby": ["Year", "Platform"]
+            "y": {
+              "field": "Cumulative_Sales",
+              "type": "quantitative",
+              "title": "Cumulative Global Sales (M)"
             },
-            {
-                "window": [{
-                    "op": "sum",
-                    "field": "Total_Global_Sales",
-                    "as": "Cumulative_Sales"
-                }],
-                "groupby": ["Platform"],
-                "sort": [{"field": "Year"}],
-                "frame": [null, 0]
-            }
-        ],
-        "layer": [
-            {
-                "mark": "line",
-                "encoding": {
-                    "x": {
-                        "field": "Year",
-                        "type": "temporal",
-                        "title": "Year"
-                    },
-                    "y": {
-                        "field": "Cumulative_Sales",
-                        "type": "quantitative",
-                        "title": "Cumulative Global Sales (M)"
-                    },
-                    "color": {
-                        "field": "Platform",
-                        "type": "nominal",
-                        "title": "Platform"
-                    },
-                    "tooltip": [
-                        {"field": "Year", "type": "temporal", "title": "Year"},
-                        {"field": "Platform", "type": "nominal", "title": "Platform"},
-                        {"field": "Cumulative_Sales", "type": "quantitative", "title": "Cumulative Sales (M)", "format": "1"}
-                    ]
-                }
-            }
-        ],
-        "width": 600,
-        "height": 400
+            "color": {
+              "field": "Platform",
+              "type": "nominal",
+              "title": "Platform"
+            },
+            "tooltip": [
+              { "field": "YearDate", "type": "temporal", "title": "Year", "format": "%Y" },
+              { "field": "Platform",  "type": "nominal",   "title": "Platform" },
+              { "field": "Cumulative_Sales", "type": "quantitative", "title": "Cumulative Sales (M)", "format": "0.2f" }
+            ]
+          }
+        }
+      ],
+      "width": 600,
+      "height": 400
     };
+
 
     //visualization 3: regional sales vs platfrom
     const vis3Spec = {
