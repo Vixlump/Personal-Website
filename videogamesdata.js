@@ -215,7 +215,7 @@ Promise.all([
             "sort": [{"field": "Total_Sales", "order": "descending"}]
         },
         {
-            "filter": "datum.platform_rank <= 15" // Show top 15 platforms
+            "filter": "datum.platform_rank <= 1000"//I set to 1000 so it would just add everything to the page
         }
     ],
     "mark": "bar",
