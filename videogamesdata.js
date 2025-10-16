@@ -1,14 +1,14 @@
-//load the dataset and create visualizations
+//load the dataset
 Promise.all([
     fetch('dataset/videogames_wide.csv').then(response => response.text()),
     fetch('dataset/videogames_long.csv').then(response => response.text())
 ]).then(([wideData, longData]) => {
-    // Robust CSV parser that handles quoted fields
+    //CSV parser
     const parseCSV = (csv) => {
         const lines = csv.split('\n').filter(line => line.trim() && !line.startsWith('#'));
         if (lines.length === 0) return [];
         
-        // Parse headers
+        //parse headers
         const headers = parseCSVLine(lines[0]);
         
         return lines.slice(1).map(line => {
@@ -16,7 +16,7 @@ Promise.all([
             const obj = {};
             headers.forEach((header, i) => {
                 let value = values[i] || '';
-                // Convert numeric fields
+                //convert numeric fields
                 if (['Year', 'Global_Sales', 'NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales'].includes(header)) {
                     value = value ? parseFloat(value) : 0;
                 }
@@ -26,7 +26,7 @@ Promise.all([
         }).filter(row => row.Name && row.Name !== '' && row.Platform && row.Platform !== '');
     };
 
-    // Helper function to parse CSV line with quoted fields
+    //helper function to parse CSV line with quoted fields
     const parseCSVLine = (line) => {
         const result = [];
         let current = '';
@@ -45,7 +45,7 @@ Promise.all([
             }
         }
         
-        // Add the last field
+        //add the last field
         result.push(current.trim());
         return result;
     };
@@ -53,7 +53,7 @@ Promise.all([
     const wideDataParsed = parseCSV(wideData);
     const longDataParsed = parseCSV(longData);
 
-    // Visualization 1: Global Sales by Genre and Platform
+    //visualization 1: Global Sales by Genre and Platform
     const vis1Spec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "description": "Average global sales by genre and platform",
@@ -108,7 +108,7 @@ Promise.all([
         "height": 400
     };
 
-    // Visualization 2: Sales Over Time by Platform and Genre
+    //visualization 2: Sales Over Time by Platform and Genre
     const vis2Spec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "description": "Sales trends over time by platform",
@@ -160,7 +160,7 @@ Promise.all([
                     "tooltip": [
                         {"field": "Year", "type": "temporal", "title": "Year"},
                         {"field": "Platform", "type": "nominal", "title": "Platform"},
-                        {"field": "Cumulative_Sales", "type": "quantitative", "title": "Cumulative Sales (M)", "format": ".2f"}
+                        {"field": "Cumulative_Sales", "type": "quantitative", "title": "Cumulative Sales (M)", "format": "1"}
                     ]
                 }
             }
@@ -169,6 +169,7 @@ Promise.all([
         "height": 400
     };
 
+    //visualization 3: regional sales vs platfrom
     const vis3Spec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "Regional sales by platform - Stacked",
@@ -176,7 +177,7 @@ Promise.all([
         "values": wideDataParsed
     },
     "transform": [
-        // Aggregate by platform first
+        //aggregate by platform first
         {
             "aggregate": [
                 {"op": "mean", "field": "NA_Sales", "as": "North America"},
@@ -251,7 +252,7 @@ Promise.all([
     "height": 400
 };
 
-    // Visualization 4: Publisher Performance Analysis
+    //visualization 4: Publisher Performance Analysis
     const vis4Spec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "description": "Publisher performance across regions and genres",
@@ -279,7 +280,7 @@ Promise.all([
                 "groupby": ["Publisher"]
             },
             {
-                "filter": "datum.rank <= 5" // Top 5 genres per publisher
+                "filter": "datum.rank <= 12" //12 because there are 12 ganeras availible in the dataset
             }
         ],
         "mark": "bar",
